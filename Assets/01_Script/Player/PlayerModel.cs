@@ -8,6 +8,7 @@ public class PlayerModel : MonoBehaviour
     public int health;
     public int attackDamage;
     public Vector2 position;
+    public float moveSpeed = 3f;
 
     // 생성자
     public PlayerModel()
@@ -18,16 +19,11 @@ public class PlayerModel : MonoBehaviour
     }
 
     // 플레이어를 이동시키는 함수
-    public void Move(Vector2 direction)
+    public void MoveDataUpdate(Vector2 direction)
     {
         position += direction;
     }
 
-    // 플레이어를 공격하는 함수
-    public void Attack()
-    {
-        // 공격 로직 구현
-    }
 
     // 플레이어를 피해를 입히는 함수
     public void TakeDamage(int damage)
