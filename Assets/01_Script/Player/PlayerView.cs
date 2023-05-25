@@ -37,4 +37,5 @@ public class PlayerView : MonoBehaviour
     {
         anim.SetBool("PlayerMove", false);
     }
+    
 }
