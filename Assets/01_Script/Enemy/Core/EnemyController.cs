@@ -14,7 +14,8 @@ public class EnemyController : MonoBehaviour
 
     public void EnemyMove()
     {
-        StartCoroutine(EnemyMoving(Vector2.down));
+        //레이를 쏴서 ENemy근처에 플레이어가 있다면? 공격을 할 수 있도록 할 것.
+        StartCoroutine(EnemyMoving(Vector2.down));      //테스트 용도로 넣었음. 추후  A*알고리즘의 결과로 dir를 넣을 것!
     }
     IEnumerator EnemyMoving(Vector3 dir)
     {
