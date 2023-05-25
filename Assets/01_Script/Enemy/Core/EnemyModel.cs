@@ -9,7 +9,7 @@ public class EnemyModel : MonoBehaviour
     public int attackDamage;
     public Vector2 currentPosition;
     public Vector2 beforePosition;
-    public float moveSpeed = 5f;
+    public float moveSpeed = 1f;    //원래 5였지만, 테스트가 잘 되는지 확인하기 위해 속도를 1로 낮췄음. 모든 테스트가 끝나고 5로 돌려놓을 것.
 
     // 생성자
     public EnemyModel()

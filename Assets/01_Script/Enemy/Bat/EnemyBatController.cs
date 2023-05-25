@@ -29,18 +29,17 @@ public class EnemyBatController : EnemyController, EnemyInterface
     }
 
     //인터페이스로 인해 구현함
-    public bool TakeDamage(int damage)
+    public EnemyController TakeDamage(int damage)
     {
         Debug.Log($"EnemyBatController : {this.gameObject.name} 이 {damage}만큼 공격당함");
         if (!model.EnemyTakeDamage(damage))
         {
-            
             Die();
-            return false;
+            return this;
         }
         else
         {
-            return true;
+            return null;
         }
     }
 }

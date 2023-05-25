@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     private PlayerSound playerSound;
 
     public bool isMoving = false;
+    public bool myTurn = false;
 
     private Vector2 inputDir;
 
@@ -21,6 +22,8 @@ public class PlayerController : MonoBehaviour
         inputActions = new InputController();
         playerSound = GetComponent<PlayerSound>();
         playerView = GetComponent<PlayerView>();
+
+        GameManager.Instance.GivePlayer(this);
     }
     private void OnEnable()
     {
@@ -43,13 +46,21 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.GivePlayer(this);
+        
+    }
+    public void PlayerTurnStart()
+    {
+        myTurn = true;
+    }
+    public void PlayerTurnEnd()
+    {
+        myTurn = false;
     }
 
     private void OnMove(InputAction.CallbackContext context)
     {
         //Debug.Log(context.ReadValue<Vector2>());
-        if(!isMoving)
+        if(isMoving==false && myTurn==true)
         {
             isMoving = true;
             inputDir = context.ReadValue<Vector2>();
@@ -83,7 +94,6 @@ public class PlayerController : MonoBehaviour
             
             if (!CheckPlayerFront(dir))     //true일 경우 이동성공하고 isMoving 초기화 성공. False일 경우 이동이 끝났으므로 직접 초기화
                 isMoving = false;
-
         }
     }
     private bool CheckPlayerFront(Vector3 dir)
@@ -105,6 +115,7 @@ public class PlayerController : MonoBehaviour
             Debug.Log("적 발견!");
             playerSound.PlayerSoundAtack();
             GameManager.Instance.AttackEnemy(hit.collider.GetComponent<EnemyInterface>(),playerModel.attackDamage);
+            GameManager.Instance.PlayerTurnEnd();       //공격했으니 플레이어 턴 끝!
             return false;
         }
         else if(hit.collider.CompareTag("Door"))
@@ -146,6 +157,7 @@ public class PlayerController : MonoBehaviour
 
         transform.position = targetPosition;
 
+        GameManager.Instance.PlayerTurnEnd();       //이동했으니 플레이어 턴 끝!
         isMoving = false;
     }
     // 플레이어가 피해를 입을 때 호출되는 함수

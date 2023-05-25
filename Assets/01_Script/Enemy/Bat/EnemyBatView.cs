@@ -4,15 +4,5 @@ using UnityEngine;
 
 public class EnemyBatView : EnemyView
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    //별도로 필요한 Bat만의특별한 애니메이션 있으면...
 }
