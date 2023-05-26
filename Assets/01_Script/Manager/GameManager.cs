@@ -77,7 +77,7 @@ public class GameManager : MonoBehaviour
             if (obj!=null)
             {
                 Debug.Log("GameManager: enemy가 죽었군요!");
-                enemyList.Remove(obj);
+                enemyList.Remove(obj);              // 리스트에서 해당 객체를 삭제함.
             }
         }
         else

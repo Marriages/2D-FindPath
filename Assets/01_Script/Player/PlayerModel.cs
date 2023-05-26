@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerModel : MonoBehaviour
+public class PlayerModel
 {
     // 플레이어의 속성 및 데이터
     public int health;
