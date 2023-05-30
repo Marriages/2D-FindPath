@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -10,6 +11,7 @@ public class GameManager : MonoBehaviour
 
     Tilemap background;
     Tilemap obstacle;
+    GridMap map;
 
     //순서대로 몬스터를 제어할 목적으로.
     List<EnemyController> enemyList;
@@ -22,6 +24,10 @@ public class GameManager : MonoBehaviour
             Instance = this;
         else
             Destroy(gameObject);
+        background = FindObjectOfType<Background>().GetComponent<Tilemap>();
+        obstacle= FindObjectOfType<Wall>().GetComponent<Tilemap>();
+
+        map = new GridMap(background, obstacle);
     }
 
     private void Start()
@@ -60,7 +66,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            foreach(EnemyController enemy in enemyList)
+            foreach(EnemyBatController enemy in enemyList)
             {
                 Debug.Log($"GameManager : {enemy.gameObject.name} 행동 시작");
                 enemy.EnemyMove();
@@ -95,6 +101,11 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning("GamaManager : Enemy가 Null이네요. 확인해주세요");
         }
     }
+    public void AttackPlayer(int damage)
+    {
+        Debug.Log($"GameManager : player는 {damage}만큼 피해를 입었습니다.");
+        playerController.OnTakeDamage(damage);
+    }
 
     public PlayerController GetPlayer()
     {
@@ -113,11 +124,18 @@ public class GameManager : MonoBehaviour
     }
     public bool EnemyCanDetectPlayer(Vector2 enemyPos,int distance)
     {
+        Debug.Log($"GameManager : 적과 플레이어간 거리 :  {(enemyPos - (Vector2)playerController.transform.position).magnitude}");
         if( (enemyPos-(Vector2)playerController.transform.position).sqrMagnitude < distance*distance )       //플레이어가 사정거리까지 들어왔는지 확인.
         {
-            //만약 그렇다면 레이를 쏴봐서 직접 보이는 거리인지 확인하기
-            int layerMask = ~(1 << LayerMask.NameToLayer("Enemy"));     //Enemy자신은 레이에 걸리지 않도록 조정
-            RaycastHit2D hit = Physics2D.Raycast(enemyPos, playerController.transform.position, 10f, layerMask);     //혹시몰라 10f까지 넉넉하게 레이를 쏴봄.
+            
+            
+            int enemyLayer = 1 << LayerMask.NameToLayer("Enemy");
+            int wallLayer = 1 << LayerMask.NameToLayer("Door");
+            int excludedLayers = enemyLayer | wallLayer;
+            int layerMask = ~excludedLayers;
+            Vector2 dir = (playerController.transform.position - (Vector3)enemyPos).normalized;
+            RaycastHit2D hit = Physics2D.Raycast(enemyPos+dir, dir, 10f, layerMask);     //혹시몰라 10f까지 넉넉하게 레이를 쏴봄.
+            Debug.Log($"GameManager : RayCast결과 :{enemyPos+dir} -> {dir} /  {hit.collider.name} ");
             if (hit.collider.gameObject.CompareTag("Player"))
                 return true;
             else
@@ -129,4 +147,18 @@ public class GameManager : MonoBehaviour
         }
 
     }
+    public List<Vector2Int> FindPathPlayer(Vector3 enemyPos)
+    {
+        List<Vector2Int> path = Astar.PathFind(map,map.WorldToGrid(enemyPos),map.WorldToGrid(playerController.transform.position));
+        foreach (var p in path)
+            Debug.Log(p);
+        return path;
+    }
+    public Vector2 NextEnemyPosition(List<Vector2Int> path)
+    {
+        Vector2 worldPos = map.GridToWorld(path[1]);
+        Vector2 localPos = (Vector3)worldPos - transform.position;
+        return localPos;
+    }
+
 }

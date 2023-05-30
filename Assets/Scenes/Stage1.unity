@@ -514,7 +514,7 @@ GameObject:
   - component: {fileID: 257489445}
   - component: {fileID: 257489444}
   - component: {fileID: 257489446}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Door
   m_TagString: Door
   m_Icon: {fileID: 0}
@@ -1044,7 +1044,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!82 &781643882
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1182,6 +1182,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 1
   attackDamage: 1
+  detectRange: 3
+  atackRange: 1
 --- !u!61 &781643886
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -6161,6 +6163,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 1
   attackDamage: 1
+  detectRange: 3
+  atackRange: 1
 --- !u!1 &1893373846
 GameObject:
   m_ObjectHideFlags: 0
@@ -8158,6 +8162,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7399693121319372964, guid: 7e4d4a28381aa8c408a56062ab6e9c01, type: 3}
       propertyPath: m_Name
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 7399693121319372964, guid: 7e4d4a28381aa8c408a56062ab6e9c01, type: 3}
+      propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 7399693121319372966, guid: 7e4d4a28381aa8c408a56062ab6e9c01, type: 3}

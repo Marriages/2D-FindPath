@@ -14,7 +14,7 @@ public static class Astar
     {
         //이거를 하면 지형별 이동속도 감소 효과를 넣기가 어려움. 직선, 대각선 거리에 따른 값을 지정해버리니까.
         const float sideDistance = 1.0f;        //직선거리
-        const float diagonalDistance = 1.4f;    //대각선거리
+        //const float diagonalDistance = 1.4f;    //대각선거리
 
         gridMap.ClearData();
         List<Vector2Int> path = null; //최종적으로 리턴시킬 길. null이 되는 경우는? 목적지가 안 나왔을 경우 + 파라메터가 비정상일경우

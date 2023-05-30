@@ -105,14 +105,14 @@ public class PlayerController : MonoBehaviour
         if (hit.collider == null)
         {
             //아무것도 없다 => 이동할 수 있다.
-            Debug.Log("아무것도 없네요!");
+            //Debug.Log("아무것도 없네요!");
             StartCoroutine(PlayerMoving(dir));
             return true;
         }
         else if (hit.collider.CompareTag("Enemy"))
         {
             //문을 통과했기에 문을 여는 소리
-            Debug.Log("적 발견!");
+            //Debug.Log("적 발견!");
             playerSound.PlayerSoundAtack();
             GameManager.Instance.AttackEnemy(hit.collider.GetComponent<EnemyInterface>(),playerModel.attackDamage);
             GameManager.Instance.PlayerTurnEnd();       //공격했으니 플레이어 턴 끝!
@@ -121,7 +121,7 @@ public class PlayerController : MonoBehaviour
         else if(hit.collider.CompareTag("Door"))
         {
             //문을 통과했기에 문을 여는 소리
-            Debug.Log("문 통과!");
+            //Debug.Log("문 통과!");
             playerSound.PlayerSoundDoorOpen();
             StartCoroutine(PlayerMoving(dir));
             return true;
