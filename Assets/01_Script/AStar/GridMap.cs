@@ -18,6 +18,7 @@ public class GridMap
     int height;
 
     Vector2Int origin;      //원점 그리드 좌표
+    Tilemap background;
 
     //위치 입력이 잘못되었다는 것을 표시하기 위한 상수. 관리를 위함.
     public const int Error_NotValid_Position = -1;
@@ -41,8 +42,36 @@ public class GridMap
     }
     public GridMap(Tilemap background, Tilemap obstacle)
     {
-        // nodes생성하기
-        // 
+        this.width = background.size.x;
+        this.height = background.size.y;
+
+        nodes = new Node[height * width];
+
+        origin = (Vector2Int)(background.origin);
+
+        Vector2Int min = new(background.cellBounds.xMin, background.cellBounds.yMin);
+        Vector2Int max = new(background.cellBounds.xMax,background.cellBounds.yMax);
+
+        for (int y = min.y; y < max.y; y++)
+        {
+            for (int x = min.x; x < max.x; x++)
+            {
+
+                int index = GridToIndex(x, y);
+                //2차원 배열을 사용하지 않기 위함
+                nodes[index] = new Node(x, y);
+
+                TileBase tile = obstacle.GetTile(new(x, y));
+                if (tile != null)
+                {
+                    Node node = GetNode(x, y);
+                    node.gridType = Node.GridType.Wall;
+                }
+            }
+        }
+
+
+        this.background = background;
     }
     public Node GetNode(int x,int y)
     {
@@ -75,13 +104,23 @@ public class GridMap
     public Vector2Int WorldToGrid(Vector3 worldPos) //IndexToGrid가 맞지않나?
     {
         //worldPos 월드좌표를 그리드 좌표로 변환하기 위한 목적의 함수
-
+        if (background != null)
+        {
+            return (Vector2Int)background.WorldToCell(worldPos);
+        }
         return new Vector2Int((int)worldPos.x, (int)worldPos.y);
+        
     }
     public Vector2 GridToWorld(Vector2Int gridPos)
     {
-        //그리드 좌표 gridPos를 월드좌표로 변환하기 위한 목적의 함수
+
+        if(background != null)
+        {
+            return background.CellToWorld((Vector3Int)gridPos) + new Vector3(0.5f, 0.5f);
+        }
         return new Vector2(gridPos.x+0.5f, gridPos.y+0.5f);
+        
+        //그리드 좌표 gridPos를 월드좌표로 변환하기 위한 목적의 함수
         //만약 문제가 생길 경우 0.5f씩 더해주기
     }
     private int GridToIndex(int x, int y)
@@ -90,7 +129,7 @@ public class GridMap
         int index = Error_NotValid_Position;
         if(IsValidPosition(x,y))
         {
-            index= x + (height - 1 - y) * width;
+            index= (x-origin.x) + ((height - 1) -(y-origin.y)) * width;
         }
         //Debug.Log($"index : {index}");
         // 그리드 x,y를 2차원배열 인덱서로 바꾸기 위한 함수
@@ -109,7 +148,7 @@ public class GridMap
     public bool IsValidPosition(int x,int y)
     {
         //맵 내부면 true 아니면 false가 나올거임
-        return (x >= 0 && x < width) && (y >= 0 && y < height);
+        return (x >= origin.x && x < width + origin.x) && (y >= origin.y && y < height+origin.y);
     }
     public bool IsValidPosition(Vector2Int gridPos)
     {

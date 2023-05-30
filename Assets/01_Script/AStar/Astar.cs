@@ -59,12 +59,16 @@ public static class Astar
                                 continue;
                             if(node == current)
                                 continue;
-                            if (node.gridType == Node.GridType.Wall)
+                            if (node.gridType != Node.GridType.Plain)
                                 continue;
                             if (close.Exists((x) => x == node))      //close에 있냐 없냐!! 물어보는 C#을 람다로 구현      이 식은 이해가 조금 부족하니 추가 공부필요
                                 continue;
                             bool isDiagonal = (Mathf.Abs(x) == Mathf.Abs(y));             //Diagonal : 대각선  -> 내가 하고자 하는건 이친구는 피료 없다!
                             // 벽인지 벽이 아닌지를 판단하는 구문! 사이에 있는 노드가 벽이냐!  -> 대각선이고, 둘중하나라도 벽이면!          이부분은 다시 고민해보기
+
+                            if (isDiagonal)
+                                continue;
+                            /*
                             if(isDiagonal &&
                                 ( gridMap.GetNode(current.x + x, current.y).gridType==Node.GridType.Wall ||
                                   gridMap.GetNode(current.x,   current.y+y).gridType==Node.GridType.Wall    ) )
@@ -80,9 +84,9 @@ public static class Astar
                                 distance = diagonalDistance;
                             else
                                 distance = sideDistance;
-
+                            */
                             //내가 갈 곳의 G값이 내 이동거리보다 크다면? 값을 갱신해야함.
-                            if(node.G > current.G+distance)
+                            if(node.G > current.G+ sideDistance)
                             {
                                 //만약 여기에 휴리스틱이 계산안된 친구가 들어온다면?? 혹시모르니...
                                 //휴리스틱이 계산안된 친구? 오픈리스트에 없던 휴리스틱이 계산안된 친구.
@@ -91,7 +95,7 @@ public static class Astar
                                     node.H = GetHeuristic(node, end);
                                     open.Add(node);
                                 }
-                                node.G = current.G + distance;
+                                node.G = current.G + sideDistance;
                                 node.parent = current;
                             }
 

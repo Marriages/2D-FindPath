@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     PlayerController playerController;
+
+    Tilemap background;
+    Tilemap obstacle;
 
     //순서대로 몬스터를 제어할 목적으로.
     List<EnemyController> enemyList;
@@ -23,7 +27,13 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         FindEnemys();
-        playerController.PlayerTurnStart();
+        if (playerController != null)
+            playerController.PlayerTurnStart();
+        else
+        { 
+            playerController = FindObjectOfType<PlayerController>();
+            playerController.PlayerTurnStart();
+        }
     }
     private void FindEnemys()
     {
@@ -100,5 +110,23 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("GamaManager : Player 등록 완료.");
         this.playerController = playerController;
+    }
+    public bool EnemyCanDetectPlayer(Vector2 enemyPos,int distance)
+    {
+        if( (enemyPos-(Vector2)playerController.transform.position).sqrMagnitude < distance*distance )       //플레이어가 사정거리까지 들어왔는지 확인.
+        {
+            //만약 그렇다면 레이를 쏴봐서 직접 보이는 거리인지 확인하기
+            int layerMask = ~(1 << LayerMask.NameToLayer("Enemy"));     //Enemy자신은 레이에 걸리지 않도록 조정
+            RaycastHit2D hit = Physics2D.Raycast(enemyPos, playerController.transform.position, 10f, layerMask);     //혹시몰라 10f까지 넉넉하게 레이를 쏴봄.
+            if (hit.collider.gameObject.CompareTag("Player"))
+                return true;
+            else
+                return false;
+        }
+        else
+        {
+            return false;
+        }
+
     }
 }

@@ -22,8 +22,8 @@ public class PlayerController : MonoBehaviour
         inputActions = new InputController();
         playerSound = GetComponent<PlayerSound>();
         playerView = GetComponent<PlayerView>();
-
-        GameManager.Instance.GivePlayer(this);
+        if (GameManager.Instance != null)
+            GameManager.Instance.GivePlayer(this);
     }
     private void OnEnable()
     {

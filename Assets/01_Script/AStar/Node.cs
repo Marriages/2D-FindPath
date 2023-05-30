@@ -18,7 +18,10 @@ public class Node : IComparable<Node>
     {
         Plain=0,
         Wall,
-        Monster
+        Monster,
+        NextStep,
+        Tutorial
+
     }
 
     public GridType gridType = GridType.Plain;
