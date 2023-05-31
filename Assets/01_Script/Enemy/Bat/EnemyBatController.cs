@@ -51,7 +51,7 @@ public class EnemyBatController : EnemyController, EnemyInterface
 
             //만약 플레이어 감지하지 못했다면, 정해진 루트대로 이동할 것.
             Debug.Log($"{gameObject.name} : 플레이어 감지 못함. 정찰진행");
-            if(model.scoutPath ==null)          // 정찰할 경로가 없는 경우임. 게임오브젝트를 통해서 정찰용 path를 받아올 것.
+            if (model.scoutPath == null)          // 정찰할 경로가 없는 경우임. 게임오브젝트를 통해서 정찰용 path를 받아올 것.
             {
                 model.EnemyScoutPathSetting(GameManager.Instance.FindPathNewScoutPoint(transform.position));    // 현재 위치를 시작으로 새로운 정찰포인트를 구해옴.
                 Vector2 nextPosition = GameManager.Instance.NextEnemyPosition(model.EnemyScoutNextPoint());     // 받아온 경로로부터 다음 이동할 위치를 받아옴
@@ -61,7 +61,7 @@ public class EnemyBatController : EnemyController, EnemyInterface
             {
                 Vector2Int nextPosition = model.EnemyScoutNextPoint();          //model로부터 정찰할 다음 값을 받아옴.
 
-                if(nextPosition != model.OUT_OF_RANGE)              // model로부터 받아온 값이 유효한 값이라면 그대로 진행
+                if (nextPosition != model.OUT_OF_RANGE)              // model로부터 받아온 값이 유효한 값이라면 그대로 진행
                 {
                     StartCoroutine(EnemyMoving(GameManager.Instance.NextEnemyPosition(nextPosition)));
                 }
@@ -72,8 +72,6 @@ public class EnemyBatController : EnemyController, EnemyInterface
                     StartCoroutine(EnemyMoving(GameManager.Instance.NextEnemyPosition(nextPosition)));
                 }
             }
-            GameManager.Instance.EnemyTurnEnd();
-
         }
     }
     IEnumerator EnemyMoving(Vector3 targetPosition)

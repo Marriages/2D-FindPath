@@ -40,12 +40,15 @@ public class EnemyModel
     {
         Debug.Log($"Index : {index}");
         index++;
-        
-        Vector2Int path = scoutPath[index];         //ArgumentOutOfRangeException  발생함. 인덱스를 벗어난 Path를 구하려 해서 발생한 문제임. 씨발씨발씨발씨발
-        if (path != null)
-            return path;
-        else
+        if( index > (scoutPath.Count-1) )
+        {
             return OUT_OF_RANGE;
+        }
+        else
+        {
+            Vector2Int path = scoutPath[index];         //ArgumentOutOfRangeException  발생함. 인덱스를 벗어난 Path를 구하려 해서 발생한 문제임. 씨발씨발씨발씨발
+            return path;
+        }
     }
 
     
