@@ -75,9 +75,20 @@ public class TestAstarTilemap : TestBase
         List<Vector2Int> path = Astar.PathFind(map, startGrid, endGrid);
         line.DrawPath(map,path);
     }
+    protected override void Test2(InputAction.CallbackContext obj)
+    {
+        TestGetTile();
+    }
 
     private void TestGetTile()
     {
+        Debug.Log($"background.size.x : {background.size.x}");
+        Debug.Log($"background.size.y : {background.size.y}");
+        Debug.Log($"background.cellBounds.xMin : {background.cellBounds.xMin}");
+        Debug.Log($"background.cellBounds.xMax : {background.cellBounds.xMax}");
+
+
+        /*
         Debug.Log($"backgroud  : {background.size}");
         Debug.Log($"wall : {obstacle.size}");
 
@@ -94,6 +105,6 @@ public class TestAstarTilemap : TestBase
                     Debug.Log($"Obstacle Pos :( {x} , {y} )");
                 }
             }
-        }
+        }*/
     }
 }

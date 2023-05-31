@@ -75,7 +75,7 @@ public class GameManager : MonoBehaviour
     }
     public void EnemyTurnEnd()
     {
-        Debug.Log($"GameManager : enemyCount : {enemyCount} -> {enemyCount - 1}");
+        //Debug.Log($"GameManager : enemyCount : {enemyCount} -> {enemyCount - 1}");
         enemyCount--;
         if(enemyCount==0)
         {
@@ -127,8 +127,6 @@ public class GameManager : MonoBehaviour
         Debug.Log($"GameManager : 적과 플레이어간 거리 :  {(enemyPos - (Vector2)playerController.transform.position).magnitude}");
         if( (enemyPos-(Vector2)playerController.transform.position).sqrMagnitude < distance*distance )       //플레이어가 사정거리까지 들어왔는지 확인.
         {
-            
-            
             int enemyLayer = 1 << LayerMask.NameToLayer("Enemy");
             int wallLayer = 1 << LayerMask.NameToLayer("Door");
             int excludedLayers = enemyLayer | wallLayer;
@@ -154,9 +152,53 @@ public class GameManager : MonoBehaviour
             Debug.Log(p);
         return path;
     }
-    public Vector2 NextEnemyPosition(List<Vector2Int> path)
+    public List<Vector2Int> FindPathNewScoutPoint(Vector3 enemyPos)
+    {
+        // paht에서 목적지를 랜덤으로 구하되, 해당구역이 갈 수 없는 곳이라면, 다시 !! while을 통해 무한반복할 것.
+        List<Vector2Int> path;
+        Vector3 randomPosition;
+        int randomX;
+        int randomY;
+        while (true)
+        {
+            randomX = Random.Range(background.cellBounds.xMin , background.cellBounds.xMax);   
+            randomY = Random.Range(background.cellBounds.yMin , background.cellBounds.yMax);
+            Debug.Log($"검출된 랜덤 위치 : ({randomX},{randomY}");
+            if(map.IsValidPosition(randomX, randomY))       //유효한범위인지, 안전하게 확인하고, 유효한 지역인지 확인할 것.
+            {
+                randomPosition = new(randomX, randomY);
+                Debug.Log($"IsWall인지 확인하기 : {map.IsWall(map.WorldToGrid(randomPosition))}");
+                Debug.Log($"IsMonster인지 확인하기 : {map.IsMonster(map.WorldToGrid(randomPosition))}");
+
+                //벽도 아니고 몬스터도 아니면?
+                if(map.IsWall(map.WorldToGrid(randomPosition))==false && map.IsMonster(map.WorldToGrid(randomPosition)) == false)
+                {       //오케이 통과! 와일문 끝!
+                    Debug.Log("오케이 통과!");
+                    path = Astar.PathFind(map, map.WorldToGrid(enemyPos), map.WorldToGrid(randomPosition));
+                    return path;
+                }
+            }
+        }
+        
+        
+
+        //경로 확인용.
+        //foreach (var p in path)
+        //    Debug.Log(p);
+
+        
+    }
+
+
+    public Vector2 NextEnemyPosition(List<Vector2Int> path)     // 플레이어를 감지하고 있을 경우 사용될 Enemy의 다음 포지션을 구해줌
     {
         Vector2 worldPos = map.GridToWorld(path[1]);
+        Vector2 localPos = (Vector3)worldPos - transform.position;
+        return localPos;
+    }
+    public Vector2 NextEnemyPosition(Vector2Int path)           // 플레이어를 감지하지 못한 경우 사용될 Enemy의 정찰용 다음 포지션을 구해줌
+    {
+        Vector2 worldPos = map.GridToWorld(path);
         Vector2 localPos = (Vector3)worldPos - transform.position;
         return localPos;
     }
