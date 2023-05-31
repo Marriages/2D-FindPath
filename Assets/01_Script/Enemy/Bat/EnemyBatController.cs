@@ -14,7 +14,7 @@ public class EnemyBatController : EnemyController, EnemyInterface
     [SerializeField] protected int attackDamage;
 
     protected BoxCollider2D col;
-    public int detectRange = 3;
+    public int detectRange = 4;
     public int atackRange = 1;
 
     bool detectPlayer = false;
@@ -23,7 +23,7 @@ public class EnemyBatController : EnemyController, EnemyInterface
 
     public void EnemyMove()
     {
-        Debug.Log($"{gameObject.name}의 행동 시작");
+        //Debug.Log($"{gameObject.name}의 행동 시작");
         //우선 플레이어를 공격할 수 있는 거리인지 확인하기.
         if(GameManager.Instance.EnemyCanDetectPlayer(transform.position,detectRange))
         {
@@ -47,12 +47,16 @@ public class EnemyBatController : EnemyController, EnemyInterface
         else            //플레이어를 감지하지 못한 상태. 정찰을 진행할 것.
         {
             if(detectPlayer==true)  //이경우 플레이어를 감지하고 있다가, 플레이어를 감지하지 못하는 상태로 변함 -> 경로를 초기화해줘야함.
+            {
                 model.EnemyScoutPathClear();
+                detectPlayer = false;
+            }
 
             //만약 플레이어 감지하지 못했다면, 정해진 루트대로 이동할 것.
-            Debug.Log($"{gameObject.name} : 플레이어 감지 못함. 정찰진행");
+            //Debug.Log($"{gameObject.name} : 플레이어 감지 못함. 정찰진행");
             if (model.scoutPath == null)          // 정찰할 경로가 없는 경우임. 게임오브젝트를 통해서 정찰용 path를 받아올 것.
             {
+                Debug.Log("정찰할 경로가 없기에 새로 설정합니다.");
                 model.EnemyScoutPathSetting(GameManager.Instance.FindPathNewScoutPoint(transform.position));    // 현재 위치를 시작으로 새로운 정찰포인트를 구해옴.
                 Vector2 nextPosition = GameManager.Instance.NextEnemyPosition(model.EnemyScoutNextPoint());     // 받아온 경로로부터 다음 이동할 위치를 받아옴
                 StartCoroutine(EnemyMoving(nextPosition));          // 그위치를 향해 움직이기 시작!
@@ -63,13 +67,26 @@ public class EnemyBatController : EnemyController, EnemyInterface
 
                 if (nextPosition != model.OUT_OF_RANGE)              // model로부터 받아온 값이 유효한 값이라면 그대로 진행
                 {
+                    // 여기서 다음 이동할 위치에 몬스터가 있는지 없는지.....확인하기
+                    // 만약에 
+
+                    //Debug.Log($"{gameObject.name} : 이미 경로 있음. 그대로 정찰 진행");
                     StartCoroutine(EnemyMoving(GameManager.Instance.NextEnemyPosition(nextPosition)));
                 }
                 else                    //만약 그렇지 않다면, 경로가 끝난 것이므로,nextPosition을 게임매니저로부터 다시 경로를 받아올 것
                 {
+                    Debug.Log($"{gameObject.name} : 경로가 Out OF Range. 새롭게 경로를 받아옴");
+
+                    model.EnemyScoutPathSetting(GameManager.Instance.FindPathNewScoutPoint(transform.position));    // 현재 위치를 시작으로 새로운 정찰포인트를 구해옴.
+                    Vector2 nextPos = GameManager.Instance.NextEnemyPosition(model.EnemyScoutNextPoint());     // 받아온 경로로부터 다음 이동할 위치를 받아옴
+                    StartCoroutine(EnemyMoving(nextPos));
+
+/*
                     model.EnemyScoutPathSetting(GameManager.Instance.FindPathNewScoutPoint(transform.position));    //path새로 받아와서 model에 셋팅하기
+
                     nextPosition = model.EnemyScoutNextPoint();         //model로부터 경로 받아오기.
-                    StartCoroutine(EnemyMoving(GameManager.Instance.NextEnemyPosition(nextPosition)));
+
+                    StartCoroutine(EnemyMoving(GameManager.Instance.NextEnemyPosition(nextPosition)));*/
                 }
             }
         }
@@ -80,6 +97,7 @@ public class EnemyBatController : EnemyController, EnemyInterface
 
         //Debug.Log(targetPosition);
         //dir = dir.normalized;
+        GameManager.Instance.EnemyPositionSettingGridTypePlain(transform.position);
         Vector3 dir;
         dir = (targetPosition - transform.position).normalized;
         //Debug.Log(dir);
@@ -100,6 +118,7 @@ public class EnemyBatController : EnemyController, EnemyInterface
         transform.position = targetPosition;
 
         GameManager.Instance.EnemyTurnEnd();
+        GameManager.Instance.EnemyPositionSettingGridTypeMonster(transform.position);
 
     }
 
@@ -144,6 +163,15 @@ public class EnemyBatController : EnemyController, EnemyInterface
         else
         {
             return null;
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if(gameObject.activeSelf)
+        {
+            Gizmos.color = Color.white;
+            Gizmos.DrawWireSphere(transform.position, detectRange);
         }
     }
 }

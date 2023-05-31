@@ -9,7 +9,7 @@ public class EnemyModel
     public int attackDamage;
     public Vector2 currentPosition;
     public Vector2 beforePosition;
-    public float moveSpeed = 1f;    //원래 5였지만, 테스트가 잘 되는지 확인하기 위해 속도를 1로 낮췄음. 모든 테스트가 끝나고 5로 돌려놓을 것.
+    public float moveSpeed = 5f;    //원래 5였지만, 테스트가 잘 되는지 확인하기 위해 속도를 1로 낮췄음. 모든 테스트가 끝나고 5로 돌려놓을 것.
 
     public List<Vector2Int> scoutPath=null;      //정찰 목적용의 길찾기 경로
     int index = 0;                          // 정찰 목적용의 길찾기 인덱스
@@ -26,9 +26,16 @@ public class EnemyModel
 
     public void EnemyScoutPathSetting(List<Vector2Int> scoutPath)
     {
-        Debug.Log($"EnemyMode : 정찰용 경로 저장 완료");
-        this.scoutPath = scoutPath;
-        index = 0;
+        //Debug.Log($"EnemyMode : 정찰용 경로 저장 완료");
+        if(scoutPath !=null)
+        {
+            this.scoutPath = scoutPath;             //여기서 제대로 저장이 안된거같은 느낌
+            index = 0;
+        }
+        else
+        {
+            Debug.LogWarning("왜그런진 모르곘지만 scoutPath가 널이네요?");
+        }
     }
     public void EnemyScoutPathClear()
     {
@@ -38,10 +45,13 @@ public class EnemyModel
     }
     public Vector2Int EnemyScoutNextPoint()
     {
-        Debug.Log($"Index : {index}");
+        if(scoutPath == null)
+            Debug.LogWarning($"scoutPath가 Null인데, 오류 발생에정임! ");
+        //Debug.Log($"Index+전 : {index} / scoutPath.count : {scoutPath.Count} / path.VectorInt : {scoutPath[index]}");
         index++;
         if( index > (scoutPath.Count-1) )
         {
+            Debug.Log("Out Of Range");
             return OUT_OF_RANGE;
         }
         else

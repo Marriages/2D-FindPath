@@ -48,14 +48,17 @@ public class GameManager : MonoBehaviour
         EnemyController[] obj = FindObjectsOfType<EnemyController>();
         foreach(EnemyController enemy in obj)
         {
-            Debug.Log($"GameManager : {enemy.gameObject.name}을 List에 넣었습니다.");
+            //Debug.Log($"GameManager : {enemy.gameObject.name}을 List에 넣었습니다.");
             enemyList.Add(enemy);
+
+            //몬스터의 현재 위치를 그리드 정보에 넣기.
+            EnemyPositionSettingGridTypeMonster(enemy.transform.position);
         }
     }
     public void PlayerTurnEnd()
     {
         // 플레이어 턴이 끝났으니, 리스트에 있는 모든 적에 대해 순차적으로 이동시키기.
-        Debug.Log("GameManager : PlayerTurn종료. Enemy Turn시작");
+        //Debug.Log("GameManager : PlayerTurn종료. Enemy Turn시작");
         playerController.PlayerTurnEnd();
 
         enemyCount = enemyList.Count;
@@ -68,10 +71,30 @@ public class GameManager : MonoBehaviour
         {
             foreach(EnemyBatController enemy in enemyList)
             {
-                Debug.Log($"GameManager : {enemy.gameObject.name} 행동 시작");
+                //Debug.Log($"GameManager : {enemy.gameObject.name} 행동 시작");
                 enemy.EnemyMove();
             }
         }
+    }
+    public void EnemyPositionSettingGridTypeMonster(Vector3 enemyPos)
+    {
+        //Debug.Log($"GameManager : {enemyPos}의 위치의 gridType를 Monster로 변경함");
+
+        //아니대성아 한번 지나갔던길은 원래대로 Monster가 아니도록 해야지!!!!!!!!!!멍청아진짜
+        //그니까 Astar가 길을 못찾고 그냥 지나가지
+
+        Node node = map.GetNode(map.WorldToGrid(enemyPos));
+        node.gridType = Node.GridType.Monster;
+    }
+    public void EnemyPositionSettingGridTypePlain(Vector3 enemyPos)
+    {
+        //Debug.Log($"GameManager : {enemyPos}의 위치의 gridType를 Monster로 변경함");
+
+        //아니대성아 한번 지나갔던길은 원래대로 Monster가 아니도록 해야지!!!!!!!!!!멍청아진짜
+        //그니까 Astar가 길을 못찾고 그냥 지나가지
+
+        Node node = map.GetNode(map.WorldToGrid(enemyPos));
+        node.gridType = Node.GridType.Plain;
     }
     public void EnemyTurnEnd()
     {
@@ -80,7 +103,7 @@ public class GameManager : MonoBehaviour
         if(enemyCount==0)
         {
             //모든 Enemey의 행동이 끝남.
-            Debug.Log("Gamemanager : 모든 Enemy Turn종료. Player턴 시작");
+            //Debug.Log("Gamemanager : 모든 Enemy Turn종료. Player턴 시작");
             playerController.PlayerTurnStart();
         }
     }
@@ -124,7 +147,7 @@ public class GameManager : MonoBehaviour
     }
     public bool EnemyCanDetectPlayer(Vector2 enemyPos,int distance)
     {
-        Debug.Log($"GameManager : 적과 플레이어간 거리 :  {(enemyPos - (Vector2)playerController.transform.position).magnitude}");
+        //Debug.Log($"GameManager : 적과 플레이어간 거리 :  {(enemyPos - (Vector2)playerController.transform.position).magnitude}");
         if( (enemyPos-(Vector2)playerController.transform.position).sqrMagnitude < distance*distance )       //플레이어가 사정거리까지 들어왔는지 확인.
         {
             int enemyLayer = 1 << LayerMask.NameToLayer("Enemy");
@@ -163,18 +186,20 @@ public class GameManager : MonoBehaviour
         {
             randomX = Random.Range(background.cellBounds.xMin , background.cellBounds.xMax);   
             randomY = Random.Range(background.cellBounds.yMin , background.cellBounds.yMax);
-            Debug.Log($"검출된 랜덤 위치 : ({randomX},{randomY}");
+            //Debug.Log($"검출된 랜덤 위치 : ({randomX},{randomY})");
             if(map.IsValidPosition(randomX, randomY))       //유효한범위인지, 안전하게 확인하고, 유효한 지역인지 확인할 것.
             {
                 randomPosition = new(randomX, randomY);
-                Debug.Log($"IsWall인지 확인하기 : {map.IsWall(map.WorldToGrid(randomPosition))}");
-                Debug.Log($"IsMonster인지 확인하기 : {map.IsMonster(map.WorldToGrid(randomPosition))}");
+                //Debug.Log($"IsWall인지 확인하기 : {map.IsWall(map.WorldToGrid(randomPosition))}");
+                //Debug.Log($"IsMonster인지 확인하기 : {map.IsMonster(map.WorldToGrid(randomPosition))}");
 
                 //벽도 아니고 몬스터도 아니면?
-                if(map.IsWall(map.WorldToGrid(randomPosition))==false && map.IsMonster(map.WorldToGrid(randomPosition)) == false)
+                if(map.IsWall(map.WorldToGrid(randomPosition)) == false && map.IsMonster(map.WorldToGrid(randomPosition)) == false)
                 {       //오케이 통과! 와일문 끝!
-                    Debug.Log("오케이 통과!");
+                    //Debug.Log("오케이 통과!");
+                    Debug.Log($"결정된 검출된 랜덤 위치 : ({randomX},{randomY}) / gridPos : {map.WorldToGrid(randomPosition)}");
                     path = Astar.PathFind(map, map.WorldToGrid(enemyPos), map.WorldToGrid(randomPosition));
+                    Debug.Log(path);
                     return path;
                 }
             }

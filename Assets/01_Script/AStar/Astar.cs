@@ -40,7 +40,7 @@ public static class Astar
                 open.Sort();        // 정렬시켜버려! 이를 위해 Node에서 CompareTo를 구현했음.
                 current = open[0];
                 open.RemoveAt(0);
-
+                Debug.Log($"while :open.Count : {open.Count}, current.x:{current.x},current.y:{current.y}  /  end.x:{end.x},end.y:{end.y}");
                 //2. openlist에서 꺼낸 값이 목표지점인지 검사하기. 도착이면 끝내기.
                 if(current != end)      //노드와 Vector2Int를 비교할 수 있도록 node쪽에 ==, !=를 구현해놨음.
                 {
@@ -112,6 +112,7 @@ public static class Astar
 
 
             //-------------------------- A*의 마무리 작업(Path만들기) --------------------------
+            Debug.Log($"최종결과 : current.x:{current.x},current.y:{current.y}  /  end.x:{end.x},end.y:{end.y}");
             if(current==end)        //목적지에 잘 도착함
             {
                 path = new List<Vector2Int>();
